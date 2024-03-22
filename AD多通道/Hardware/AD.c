@@ -10,7 +10,7 @@ void AD_Init(void)
 	
 	GPIO_InitTypeDef GPIO_InitStruct;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
 	
