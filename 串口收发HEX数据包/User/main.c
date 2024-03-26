@@ -18,12 +18,21 @@ int main(void)
 	TxData[1] = 0x01;
 	TxData[2] = 0x01;
 	TxData[3] = 0x01;
-	
-	Serial_SendPacket();
 
+	uint8_t KeyNum;
 	
 	while (1)
 	{
+		KeyNum = Key_GetNum();
+		if(KeyNum == 1)
+		{
+			TxData[0] += 1;
+			TxData[1] += 2;
+			TxData[2] += 3;
+			TxData[3] += 4;
+			Serial_SendPacket();
+		}
+			
 		if(Serial_GetRxFlag() == 1)
 		{
 			OLED_ShowHexNum(2, 1, RxPacket[0], 2);
