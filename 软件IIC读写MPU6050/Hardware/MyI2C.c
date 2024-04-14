@@ -76,3 +76,42 @@ void MyI2C_SendByte(uint8_t Byte)
 //接收一个字节：SCL低电平期间，从机将数据位依次放到SDA线上（高位先行），
 //然后释放SCL，主机将在SCL高电平期间读取数据位，所以SCL高电平期间SDA不允许有数据变化，
 //依次循环上述过程8次，即可接收一个字节（主机在接收之前，需要释放SDA）
+uint8_t MyI2C_ReceiveByte(void)
+{
+	uint8_t i, Byte = 0x00;
+	MyI2C_W_SDA(1);
+	for(i = 0; i < 8; i++)
+	{
+		MyI2C_W_SCL(1);
+		if(MyI2C_R_SDA() == 1)
+		{
+			Byte |= (0x80 >> i);
+		}
+		MyI2C_W_SCL(0);
+	}
+	
+	return Byte;
+}
+
+
+//发送应答：主机在接收完一个字节之后，在下一个时钟发送一位数据，
+//数据0表示应答，数据1表示非应答
+void MyI2C_SendAck(uint8_t AckBit)
+{
+	MyI2C_W_SDA(AckBit);					//主机把应答位数据放到SDA线
+	MyI2C_W_SCL(1);							//释放SCL，从机在SCL高电平期间，读取应答位
+	MyI2C_W_SCL(0);
+}
+
+//接收应答：主机在发送完一个字节之后，在下一个时钟接收一位数据，判断从机是否应答，
+//数据0表示应答，数据1表示非应答（主机在接收之前，需要释放SDA）
+
+uint8_t MyI2C_ReceiveAck(void)
+{
+	uint8_t AckBit;							//定义应答位变量
+	MyI2C_W_SDA(1);							//接收前，主机先确保释放SDA，避免干扰从机的数据发送
+	MyI2C_W_SCL(1);							//释放SCL，主机机在SCL高电平期间读取SDA
+	AckBit = MyI2C_R_SDA();					//将应答位存储到变量里
+	MyI2C_W_SCL(0);							//拉低SCL，开始下一个时序模块
+	return AckBit;	
+}
